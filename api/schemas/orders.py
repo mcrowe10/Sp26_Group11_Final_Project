@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 from .order_details import OrderDetail
-from .payment import Payment
+from .payments import Payment
 
 
 
@@ -13,7 +13,6 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     pass
-
 
 class OrderUpdate(BaseModel):
     customer_name: Optional[str] = None
