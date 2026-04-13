@@ -19,6 +19,10 @@ class SandwichUpdate(BaseModel):
 
 class Sandwich(SandwichBase):
     id: int
+    sandwich_name: str
+    price: float
+    calories: int
+    food_category: str
 
     class ConfigDict:
         from_attributes = True

@@ -8,6 +8,7 @@ class OrderDetailBase(BaseModel):
     amount: int
 
 
+
 class OrderDetailCreate(OrderDetailBase):
     order_id: int
     sandwich_id: int
@@ -21,7 +22,8 @@ class OrderDetailUpdate(BaseModel):
 class OrderDetail(OrderDetailBase):
     id: int
     order_id: int
-    sandwich: Sandwich = None
+    sandwich_id: int
+    sandwich: Optional[Sandwich] = None
 
     class ConfigDict:
         from_attributes = True
