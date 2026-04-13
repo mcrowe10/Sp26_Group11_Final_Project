@@ -1,13 +1,10 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from .customers import Customer
-
 
 
 class ReviewBase(BaseModel):
-    review_text: str
-    score: float = None
+    score: float
 
 
 class ReviewCreate(ReviewBase):
@@ -15,12 +12,15 @@ class ReviewCreate(ReviewBase):
 
 
 class ReviewUpdate(BaseModel):
+    review_text: Optional[str] = None
+    score: Optional[float] = None
     customer_name: Optional[str] = None
 
 
 class Review(ReviewBase):
     id: int
-    customer_name: list[Customer] = None
+    review_text: str
+    customer_name: str
 
     class ConfigDict:
         from_attributes = True

@@ -1,31 +1,35 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from .order_details import OrderDetail
 from .payments import Payment
-
+from .customers import Customer
 
 
 class OrderBase(BaseModel):
-    customer_name: str
-    description: Optional[str] = None
+    order_date: datetime
 
 
 class OrderCreate(OrderBase):
-    pass
+    customer_name: str
+    payment_status: str
+
 
 class OrderUpdate(BaseModel):
-    customer_name: Optional[str] = None
     description: Optional[str] = None
     order_status: Optional[str] = None
+    tracking_number: Optional[str] = None
+    price: Optional[float] = None
+
 
 class Order(OrderBase):
     id: int
-    order_date: Optional[datetime] = None
-    order_details: list[OrderDetail] = None
-    tracking_number: Optional[str] = None
-    payment_status: list[Payment] = None
-    price: Optional[float] = None
+    description: str
+    order_status: str
+    tracking_number: int
+    price: float
+    customer: Customer = None
+    payment: Payment = None
+
 
     class ConfigDict:
         from_attributes = True

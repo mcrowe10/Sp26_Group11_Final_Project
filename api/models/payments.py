@@ -7,7 +7,7 @@ class Payments(Base):
     __tablename__ = "payments"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    card_info = Column(String, index=True, nullable=False)
+    card_info = Column(String(100), index=True, nullable=False)
     status = Column(String(50), index=True, nullable=False)
     payment_type = Column(String(50), index=True, nullable=False)
 

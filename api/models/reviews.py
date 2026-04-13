@@ -7,8 +7,6 @@ class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    customer_id = Column(Integer, ForeignKey("customer.id"))
-    review_text = Column(String, index=True, nullable=False)
+    customer_name = Column(String(100), index=True, nullable=False)
+    review_text = Column(String(300), index=True, nullable=False)
     score = Column(DECIMAL(4,2), nullable=False)
-
-    customers = relationship("Customer", back_populates="reviews")
