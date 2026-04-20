@@ -11,6 +11,7 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     customer_name: str
+    customer_id: int
     payment_status: str
 
 
@@ -27,7 +28,7 @@ class Order(OrderBase):
     order_status: str
     tracking_number: int
     price: float
-    customer: Customer = None
+    customer: Optional[Customer] = None
     payment: Payment = None
 
 
