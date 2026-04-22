@@ -7,11 +7,11 @@ class Customer(Base):
     __tablename__ = "customers"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    customer_name = Column(String(100))
-    email = Column(String(100))
-    phone_number = Column(Integer)
-    address = Column(String(100))
-    default_payment = Column(Integer, ForeignKey("payments.id"))
+    customer_name = Column(String(100), nullable=False)
+    email = Column(String(100), nullable=True, server_default="")
+    phone_number = Column(Integer, nullable=True, server_default="")
+    address = Column(String(100), nullable=True, server_default="")
+    default_payment = Column(Integer, ForeignKey("payments.id"), nullable=True)
 
     orders = relationship("Order", back_populates="customer")
     reviews = relationship("Review", back_populates="customer")

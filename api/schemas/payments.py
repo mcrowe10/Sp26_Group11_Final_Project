@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class PaymentBase(BaseModel):
     card_info: str
+    payment_type: str
 
 
 class PaymentCreate(PaymentBase):
@@ -17,7 +18,6 @@ class PaymentUpdate(BaseModel):
 class Payment(PaymentBase):
     id: int
     status: str
-    payment_type: str
 
     class ConfigDict:
         from_attributes = True

@@ -7,10 +7,12 @@ from .customers import Customer
 
 class OrderBase(BaseModel):
     order_date: datetime
+    tracking_number: str
+    order_status: str
+    price: float
 
 
 class OrderCreate(OrderBase):
-    customer_name: str
     customer_id: int
     payment_status: str
 
@@ -24,10 +26,8 @@ class OrderUpdate(BaseModel):
 
 class Order(OrderBase):
     id: int
+    customer_id: int
     description: str
-    order_status: str
-    tracking_number: int
-    price: float
     customer: Optional[Customer] = None
     payment: Payment = None
 

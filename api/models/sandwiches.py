@@ -8,10 +8,10 @@ class Sandwich(Base):
     __tablename__ = "sandwiches"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    sandwich_name = Column(String(100), unique=True, nullable=True)
+    sandwich_name = Column(String(100), unique=True, nullable=False)
     price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
-    calories = Column(Integer, index=True, nullable=False, server_default='0')
-    food_category = Column(String(50), index=True, nullable=False)
+    calories = Column(Integer, nullable=False, server_default='0')
+    food_category = Column(String(50), nullable=False, server_default="")
 
     recipes = relationship("Recipe", back_populates="sandwich")
     order_details = relationship("OrderDetail", back_populates="sandwich")

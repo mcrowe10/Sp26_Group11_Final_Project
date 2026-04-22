@@ -5,11 +5,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
-    new_item = model.Payments(
-        id=request.id,
+    new_item = model.Payment(
         card_info=request.card_info,
-        status=request.status,
-        payment_type=request.payment_type
+        payment_type=request.payment_type,
+        status="pending"
     )
 
     try:
@@ -25,16 +24,16 @@ def create(db: Session, request):
 
 def read_all(db: Session):
     try:
-        result = db.query(model.Payments).all()
+        result = db.query(model.Payment).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return result
 
 
-def read_one(db: Session, id):
+def read_one(db: Session, item_id):
     try:
-        item = db.query(model.Payments).filter(model.Payments.id == id).first()
+        item = db.query(model.Payment).filter(model.Payment.id == item_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
     except SQLAlchemyError as e:
@@ -43,9 +42,9 @@ def read_one(db: Session, id):
     return item
 
 
-def update(db: Session, id, request):
+def update(db: Session, item_id, request):
     try:
-        item = db.query(model.Payments).filter(model.Payments.id == id)
+        item = db.query(model.Payment).filter(model.Payment.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         update_data = request.dict(exclude_unset=True)
@@ -57,9 +56,9 @@ def update(db: Session, id, request):
     return item.first()
 
 
-def delete(db: Session, id):
+def delete(db: Session, item_id):
     try:
-        item = db.query(model.Payments).filter(model.Payments.id == id)
+        item = db.query(model.Payment).filter(model.Payment.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         item.delete(synchronize_session=False)

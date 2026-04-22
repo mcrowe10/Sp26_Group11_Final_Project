@@ -9,7 +9,7 @@ class CustomerBase(BaseModel):
 
 
 class CustomerCreate(CustomerBase):
-    default_payment: int
+    pass
 
 
 class CustomerUpdate(BaseModel):
@@ -25,7 +25,7 @@ class Customer(CustomerBase):
     email: str
     phone_number: str
     address: str
-    payment: Payment = None
+    payment: Optional[Payment] = None
 
     class ConfigDict:
         from_attributes = True

@@ -9,7 +9,8 @@ class SandwichBase(BaseModel):
 
 
 class SandwichCreate(SandwichBase):
-    pass
+    calories: int
+    food_category: str
 
 
 class SandwichUpdate(BaseModel):
@@ -21,8 +22,6 @@ class SandwichUpdate(BaseModel):
 
 class Sandwich(SandwichBase):
     id: int
-    calories: int
-    food_category: str
 
     class ConfigDict:
         from_attributes = True
