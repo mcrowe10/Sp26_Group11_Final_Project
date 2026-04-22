@@ -7,10 +7,6 @@ from sqlalchemy.exc import SQLAlchemyError
 def create(db: Session, request):
     new_item = model.Customer(
         customer_name=request.customer_name,
-        email=request.email,
-        phone_number=request.phone_number,
-        address=request.address,
-        default_payment=request.default_payment
     )
 
     try:
@@ -33,9 +29,9 @@ def read_all(db: Session):
     return result
 
 
-def read_one(db: Session, id):
+def read_one(db: Session, item_id):
     try:
-        item = db.query(model.Customer).filter(model.Customer.id == id).first()
+        item = db.query(model.Customer).filter(model.Customer.id == item_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
     except SQLAlchemyError as e:
@@ -44,9 +40,9 @@ def read_one(db: Session, id):
     return item
 
 
-def update(db: Session, id, request):
+def update(db: Session, item_id, request):
     try:
-        item = db.query(model.Customer).filter(model.Customer.id == id)
+        item = db.query(model.Customer).filter(model.Customer.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         update_data = request.dict(exclude_unset=True)
@@ -57,10 +53,9 @@ def update(db: Session, id, request):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return item.first()
 
-
-def delete(db: Session, id):
+def delete(db: Session, item_id):
     try:
-        item = db.query(model.Customer).filter(model.Customer.id == id)
+        item = db.query(model.Customer).filter(model.Customer.id == item_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         item.delete(synchronize_session=False)
@@ -69,4 +64,3 @@ def delete(db: Session, id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
