@@ -12,4 +12,3 @@ class Payment(Base):
     payment_type = Column(String(50), nullable=False, server_default="VISA")
 
     customer = relationship("Customer", back_populates="payments")
-    order = relationship("Order", back_populates="payment")

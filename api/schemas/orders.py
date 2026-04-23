@@ -14,7 +14,6 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     customer_id: int
-    payment_status: str
 
 
 class OrderUpdate(BaseModel):
@@ -29,7 +28,6 @@ class Order(OrderBase):
     customer_id: int
     description: str
     customer: Optional[Customer] = None
-    payment: Payment = None
 
 
     class ConfigDict:
