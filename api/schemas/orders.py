@@ -1,8 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 from .payments import Payment
 from .customers import Customer
+from .order_details import OrderDetail
 
 
 class OrderBase(BaseModel):
@@ -28,6 +29,7 @@ class Order(OrderBase):
     customer_id: int
     description: str
     customer: Optional[Customer] = None
+    order_details: List[OrderDetail] = []
 
 
     class ConfigDict:

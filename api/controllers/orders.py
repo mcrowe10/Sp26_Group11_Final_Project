@@ -1,16 +1,38 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
+from ..models import order_details as detail_model
+from ..models import sandwiches as sandwich_model
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
-    new_item = model.Order(
-        customer_name=request.customer_name,
-        payment_status=request.payment_status
-    )
-
     try:
+        total_cost = 0
+
+        for item in request.order_details:
+
+            sandwich = (
+                db.query(sandwich_model.Sandwich)
+                .filter(sandwich_model.Sandwich.id == item.sandwich_id)
+                .first()
+            )
+
+            if not sandwich:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Sandwich {item.sandwich_id} not found!"
+                )
+
+            item_total = sandwich.price * item.quantity
+            total_cost += item_total
+
+        new_item = model.Order(
+            customer_name=request.customer_name,
+            payment_status=request.payment_status,
+            cost=total_cost,
+        )
+
         db.add(new_item)
         db.commit()
         db.refresh(new_item)

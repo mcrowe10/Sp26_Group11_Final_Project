@@ -15,7 +15,7 @@ def create(db: Session, request):
 
     try:
         sandwich = db.query(sandwich_model.Sandwich).options(
-            joinedload(sandwich_model.Sandwich.recipe)
+            joinedload(sandwich_model.Sandwich.recipes)
             .joinedload(recipe_model.Recipe.resource)
         ).filter(
             sandwich_model.Sandwich.id == request.sandwich_id
@@ -26,14 +26,14 @@ def create(db: Session, request):
                 status_code=status.HTTP_404_NOT_FOUND, detail="Sandwich not found!"
             )
 
-        if not sandwich.recipe:
+        if not sandwich.recipes:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="No recipe defined for this sandwich!"
             )
 
         resource_updates = []
 
-        for recipe in sandwich.recipe:
+        for recipe in sandwich.recipes:
             resource = recipe.resource
             required_amount = recipe.amount * request.amount
 
@@ -46,7 +46,7 @@ def create(db: Session, request):
             if resource.amount < required_amount:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Not enough {resource.name} in stock"
+                    detail=f"Not enough {resource.item} in stock"
                 )
 
             resource_updates.append((resource, required_amount))

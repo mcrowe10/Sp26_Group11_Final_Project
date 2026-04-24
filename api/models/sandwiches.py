@@ -13,5 +13,5 @@ class Sandwich(Base):
     calories = Column(Integer, nullable=False, server_default='0')
     food_category = Column(String(50), nullable=False, server_default="")
 
-    recipe = relationship("Recipe", back_populates="sandwich")
+    recipes = relationship("Recipe", back_populates="sandwich")
     order_details = relationship("OrderDetail", back_populates="sandwich")
