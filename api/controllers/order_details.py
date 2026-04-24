@@ -3,6 +3,7 @@ from fastapi import HTTPException, status, Response, Depends
 from ..models import order_details as model
 from ..models import sandwiches as sandwich_model
 from ..models import recipes as recipe_model
+from ..models import orders as order_model
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -54,11 +55,20 @@ def create(db: Session, request):
         for resource, required_amount in resource_updates:
             resource.amount -= required_amount
 
-        new_item = model.OrderDetail(
-            order_id=request.order_id,
-            sandwich_id=request.sandwich_id,
-            amount=request.amount
-        )
+        cost = sandwich.price * request.amount
+
+        order = db.query(order_model.Order).filter(
+            order_model.Order.id == request.order_id
+        ).first()
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Order not found!"
+            )
+
+        order.cost = order.cost + cost
+
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
