@@ -107,16 +107,128 @@ def read_one(db: Session, item_id):
 
 def update(db: Session, item_id, request):
     try:
-        item = db.query(model.OrderDetail).filter(model.OrderDetail.id == item_id)
-        if not item.first():
+        item = db.query(model.OrderDetail).filter(model.OrderDetail.id == item_id).first()
+        if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
+
+        # query sandwich, recipes, and resource
+        sandwich = db.query(sandwich_model.Sandwich).options(
+            joinedload(sandwich_model.Sandwich.recipes)
+            .joinedload(recipe_model.Recipe.resource)
+        ).filter(
+            sandwich_model.Sandwich.id == item.sandwich_id
+        ).first()
+
+        if not sandwich:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Sandwich not found!"
+            )
+
+        if not sandwich.recipes:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="No recipe defined for this sandwich!"
+            )
+
+        for recipe in sandwich.recipes:
+            # get columns from recipes
+            resource = recipe.resource
+            required_amount = recipe.amount * item.amount
+
+            if not resource:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Resource {recipe.resource_id} not found!"
+                )
+
+            # update resource.amount for inventory
+            resource.amount += required_amount
+
+        # calculate cost of order_detail
+        cost = sandwich.price * item.amount
+
+        # query order
+        order = db.query(order_model.Order).filter(
+            order_model.Order.id == item.order_id
+        ).first()
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Order not found!"
+            )
+
+        # update order.cost with new order_detail
+        order.price = max(order.price - cost, 0)
+
         update_data = request.dict(exclude_unset=True)
-        item.update(update_data, synchronize_session=False)
+        for key, value in update_data.items():
+            setattr(item, key, value)
+
+        # query sandwich, recipes, and resource
+        sandwich = db.query(sandwich_model.Sandwich).options(
+            joinedload(sandwich_model.Sandwich.recipes)
+            .joinedload(recipe_model.Recipe.resource)
+        ).filter(
+            sandwich_model.Sandwich.id == request.sandwich_id
+        ).first()
+
+        if not sandwich:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Sandwich not found!"
+            )
+
+        if not sandwich.recipes:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="No recipe defined for this sandwich!"
+            )
+
+        resource_updates = []
+
+        for recipe in sandwich.recipes:
+            # get columns from recipes
+            resource = recipe.resource
+            required_amount = recipe.amount * request.amount
+
+            if not resource:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Resource {recipe.resource_id} not found!"
+                )
+
+            if resource.amount < required_amount:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Not enough {resource.item} in stock"
+                )
+
+            resource_updates.append((resource, required_amount))
+
+        for resource, required_amount in resource_updates:
+            # update resource.amount for inventory
+            resource.amount -= required_amount
+
+        # calculate cost of order_detail
+        cost = sandwich.price * request.amount
+
+        # query order
+        order = db.query(order_model.Order).filter(
+            order_model.Order.id == request.order_id
+        ).first()
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Order not found!"
+            )
+
+        # update order.cost with new order_detail
+        order.price = order.price + cost
+
         db.commit()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item.first()
+    return item
 
 def delete(db: Session, item_id):
     try:
