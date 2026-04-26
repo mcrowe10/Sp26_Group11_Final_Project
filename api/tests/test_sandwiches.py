@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from ..controllers import order_details as controller
+from ..controllers import sandwiches as controller
 from ..main import app
 import pytest
 from ..models import sandwiches as model
@@ -13,7 +13,7 @@ def db_session(mocker):
     return mocker.Mock()
 
 
-def test_create_order_detail(db_session):
+def test_create_sandwich(db_session):
     # Create a sample sandwich
     sandwich_data = {
         "sandwich_name": "Veggie",

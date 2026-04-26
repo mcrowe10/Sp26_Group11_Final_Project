@@ -3,7 +3,6 @@ from ..controllers import order_details as controller
 from ..main import app
 import pytest
 from ..models import order_details as model
-from ..models import orders as order_model
 
 # Create a test client for the app
 client = TestClient(app)
@@ -14,33 +13,41 @@ def db_session(mocker):
     return mocker.Mock()
 
 
-def test_create_order_detail(db_session):
-    # Create a sample order
-    order_data = {
-        "customer_name": "John Doe",
-        "order_date": "2021-04-01",
-        "description": "Test order",
-        "tracking_number": "1A2B3C",
-        "order_status": "Test",
-    }
+def test_create_order_detail(db_session, mocker):
+    order = mocker.Mock()
+    order.id = 1
+    order.price = 0.0
 
-    order_object = order_model.Order(**order_data)
+    db_session.query.return_value.filter.return_value.first.return_value = order
 
-    # Call the create function
-    created_order = controller.create(db_session, order_object)
+    resource = mocker.Mock()
+    resource.amount = 10
 
-    # Create a sample order_details
+    recipe = mocker.Mock()
+    recipe.resource = resource
+    recipe.amount = 1
+
+    sandwich = mocker.Mock()
+    sandwich.id = 2
+    sandwich.price = 5.99
+    sandwich.recipes = [recipe]
+
+    db_session.query.return_value.options.return_value.filter.return_value.first.return_value = sandwich
+
     order_detail_data = {
-        "order_id": created_order.id,
-        "sandwich_id": created_sandwichh_id
+        "order_id": order.id,
+        "sandwich_id": sandwich.id,
+        "amount": 2
     }
 
-    order_object = model.Order(**order_data)
+    order_detail_object = model.OrderDetail(**order_detail_data)
 
     # Call the create function
-    created_order = controller.create(db_session, order_object)
+    created_order_detail = controller.create(db_session, order_detail_object)
 
     # Assertions
-    assert created_order is not None
-    assert created_order.customer_name == "John Doe"
-    assert created_order.description == "Test order"
+    assert created_order_detail is not None
+    assert created_order_detail.order_id == order.id
+    assert created_order_detail.sandwich_id == sandwich.id
+    assert resource.amount == 8
+    assert order.price == 11.98
