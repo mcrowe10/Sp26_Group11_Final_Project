@@ -14,26 +14,33 @@ def db_session(mocker):
 
 
 def test_create_order_detail(db_session, mocker):
+    # Create mock order
     order = mocker.Mock()
     order.id = 1
     order.price = 0.0
 
+    # Update order to DB object
     db_session.query.return_value.filter.return_value.first.return_value = order
 
+    # Create mock resource
     resource = mocker.Mock()
     resource.amount = 10
 
+    # Create mock recipe
     recipe = mocker.Mock()
     recipe.resource = resource
     recipe.amount = 1
 
+    # Create mock recipe
     sandwich = mocker.Mock()
     sandwich.id = 2
     sandwich.price = 5.99
     sandwich.recipes = [recipe]
 
+    # Update recipe to DB object
     db_session.query.return_value.options.return_value.filter.return_value.first.return_value = sandwich
 
+    # Create a sample order_detail
     order_detail_data = {
         "order_id": order.id,
         "sandwich_id": sandwich.id,

@@ -22,7 +22,7 @@ def test_create_recipe(db_session, mocker):
     resource = mocker.Mock()
     resource.id = 2
 
-    # Create a sample order
+    # Create a sample recipe
     recipe_data = {
         "sandwich_id": sandwich.id,
         "resource_id": resource.id,
