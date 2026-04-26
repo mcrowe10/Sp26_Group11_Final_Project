@@ -6,11 +6,9 @@ from .payments import Payment
 
 class CustomerBase(BaseModel):
     customer_name: str
-
-
+    payment: Optional[Payment] = None
 
 class CustomerCreate(CustomerBase):
-    payment: Optional[Payment] = None
     pass
 
 
@@ -19,7 +17,7 @@ class CustomerUpdate(BaseModel):
     email: Optional[str] = None
     phone_number: Optional[str] = None
     address: Optional[str] = None
-    default_payment: Optional[str] = None
+    default_payment: Optional[int] = None
 
 
 class Customer(CustomerBase):
@@ -27,7 +25,6 @@ class Customer(CustomerBase):
     email: str
     phone_number: str
     address: str
-    payment: Optional[Payment] = None
 
     class ConfigDict:
         from_attributes = True

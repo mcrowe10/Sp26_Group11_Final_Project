@@ -10,7 +10,6 @@ def create(db: Session, request):
         payment_type=request.payment_type,
         status="pending"
     )
-
     try:
         db.add(new_item)
         db.commit()
