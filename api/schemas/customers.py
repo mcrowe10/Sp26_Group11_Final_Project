@@ -8,7 +8,9 @@ class CustomerBase(BaseModel):
     customer_name: str
 
 
+
 class CustomerCreate(CustomerBase):
+    payment: Optional[Payment] = None
     pass
 
 
