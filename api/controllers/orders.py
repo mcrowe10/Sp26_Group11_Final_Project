@@ -1,21 +1,31 @@
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
+from ..models import customers as customer_model
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
-    new_item = model.Order(
-        customer_id=request.customer_id,
-        customer_name=request.customer_name,
-        order_date=request.order_date,
-        description=request.description,
-        tracking_number=request.tracking_number,
-        order_status=request.order_status,
-        price=0.0
-    )
-
     try:
+        customer = None
+
+        if request.customer_id:
+            customer = db.query(customer_model.Customer).filter(
+                customer_model.Customer.id == request.customer_id).first()
+
+            if not customer:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Customer not found"
+                )
+
+        new_item = model.Order(
+            customer_name=customer.customer_name if customer else request.customer_name,        order_date=request.order_date,
+            description=request.description,
+            tracking_number=request.tracking_number,
+            order_status=request.order_status,
+            price=0.0
+        )
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
@@ -24,17 +34,6 @@ def create(db: Session, request):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
 
     return new_item
-
-
-def search_by_date(db: Session, date):
-    try:
-        result = db.query(model.Order).filter(
-            model.Order.order_date == date
-        ).all()
-    except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
 
 
 def read_all(db: Session):
@@ -83,24 +82,31 @@ def delete(db: Session, item_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-def get_by_tracking_num(db: Session, tracking_number: int):
-    order = db.query(model.Order).filter(model.Order.tracking_number == tracking_number).first()
-    if not order:
-        raise HTTPException(status_code = 404, detail="Tracking number not found!")
+
+def get_by_tracking_num(db: Session, tracking_number):
+    try:
+        order = db.query(model.Order).filter(model.Order.tracking_number == tracking_number).first()
+        if not order:
+            raise HTTPException(status_code = 404, detail="Tracking number not found!")
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return order
 
-def get_status(db: Session, tracking_number: int):
-    order = get_by_tracking_num(db, tracking_number)
+
+def get_status(db: Session, tracking_number):
+    try:
+        order = get_by_tracking_num(db, tracking_number)
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return {"tracking_number": tracking_number, "status": order.order_status}
 
-def get_all_orders(db: Session):
-    return db.query(model.Order).all()
-
-def get_order(db: Session, order_id: int):
-    order = db.query(model.Order).filter(model.Order.id == order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found!")
-    return order
 
 def get_order_by_date(db: Session, start_date, end_date):
-    return db.query(model.Order).filter(model.Order.order_date >= start_date, model.Order.order_date <= end_date).all()
+    try:
+        order = db.query(model.Order).filter(model.Order.order_date >= start_date, model.Order.order_date <= end_date).all()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return order

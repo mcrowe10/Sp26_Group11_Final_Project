@@ -9,14 +9,12 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     customer_name = Column(String(100))
-    customer_id = Column(Integer, ForeignKey("customers.id"))
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
-    tracking_number = Column(Integer, unique = True, index = True)
-    order_status = Column(String, default = "Pending")
-    payment_status = Column(String(50), ForeignKey("payments.status"))
+    tracking_number = Column(String(100), unique = True, index = True)
+    order_status = Column(String(50), default = "Pending")
     price = Column(DECIMAL(10,2))
 
     order_details = relationship("OrderDetail", back_populates="order")
-    customers = relationship("Customer", back_populates="order")
-    payments = relationship("Payment", back_populates="order")
+    customer = relationship("Customer", back_populates="orders")
