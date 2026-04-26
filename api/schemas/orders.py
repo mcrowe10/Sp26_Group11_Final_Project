@@ -7,6 +7,7 @@ from .order_details import OrderDetail
 
 
 class OrderBase(BaseModel):
+    customer_name: str
     order_date: datetime
     tracking_number: str
     order_status: str
@@ -18,6 +19,7 @@ class OrderCreate(OrderBase):
 
 
 class OrderUpdate(BaseModel):
+    customer_name: Optional[str] = None
     description: Optional[str] = None
     order_status: Optional[str] = None
     tracking_number: Optional[str] = None
@@ -26,7 +28,6 @@ class OrderUpdate(BaseModel):
 
 class Order(OrderBase):
     id: int
-    customer_id: int
     description: str
     customer: Optional[Customer] = None
     order_details: List[OrderDetail] = []
