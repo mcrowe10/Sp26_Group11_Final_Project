@@ -29,6 +29,17 @@ def test_create_order_detail(db_session):
     # Call the create function
     created_order = controller.create(db_session, order_object)
 
+    # Create a sample order_details
+    order_detail_data = {
+        "order_id": created_order.id,
+        "sandwich_id": created_sandwichh_id
+    }
+
+    order_object = model.Order(**order_data)
+
+    # Call the create function
+    created_order = controller.create(db_session, order_object)
+
     # Assertions
     assert created_order is not None
     assert created_order.customer_name == "John Doe"
