@@ -4,6 +4,7 @@ from ..models import payments as model
 from sqlalchemy.exc import SQLAlchemyError
 
 
+
 def create(db: Session, request):
     new_item = model.Payment(
         card_info=request.card_info,
