@@ -9,7 +9,7 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
-    customer_name = Column(String(50), nullable=True)
+    customer_name = Column(String(50), nullable=False)
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300), nullable=True, server_default="")
     tracking_number = Column(String(100), unique=True, nullable=False)
