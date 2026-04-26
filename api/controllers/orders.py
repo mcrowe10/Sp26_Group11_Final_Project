@@ -82,3 +82,25 @@ def delete(db: Session, item_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+def get_by_tracking_num(db: Session, tracking_number: int):
+    order = db.query(model.Order).filter(model.Order.tracking_number == tracking_number).first()
+    if not order:
+        raise HTTPException(status_code = 404, detail="Tracking number not found!")
+    return order
+
+def get_status(db: Session, tracking_number: int):
+    order = get_by_tracking_num(db, tracking_number)
+    return {"tracking_number": tracking_number, "status": order.order_status}
+
+def get_all_orders(db: Session):
+    return db.query(model.Order).all()
+
+def get_order(db: Session, order_id: int):
+    order = db.query(model.Order).filter(model.Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found!")
+    return order
+
+def get_order_by_date(db: Session, start_date, end_date):
+    return db.query(model.Order).filter(model.Order.order_date >= start_date, model.Order.order_date <= end_date).all()
