@@ -7,7 +7,6 @@ class PaymentStatus(str):
     processing = "processing"
     complete = "complete"
     declined = "declined"
-    reversed = "reversed"
 
 
 class PaymentBase(BaseModel):
@@ -26,5 +25,6 @@ class PaymentUpdate(BaseModel):
 class Payment(PaymentBase):
     id: int
     status: str
+
     class ConfigDict:
         from_attributes = True

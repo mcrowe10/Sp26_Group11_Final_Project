@@ -8,6 +8,7 @@ from ..models import payments as payments
 def create(db: Session, request):
     new_customer = model.Customer(
         customer_name=request.customer_name,
+        default_payment=request.default_payment,
     )
     try:
         db.add(new_customer)
