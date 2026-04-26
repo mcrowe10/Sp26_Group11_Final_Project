@@ -10,8 +10,7 @@ class CustomerBase(BaseModel):
 
 
 class CustomerCreate(CustomerBase):
-    payment: Optional[Payment] = None
-    pass
+    default_payment_id: int
 
 
 class CustomerUpdate(BaseModel):
@@ -19,7 +18,7 @@ class CustomerUpdate(BaseModel):
     email: Optional[str] = None
     phone_number: Optional[str] = None
     address: Optional[str] = None
-    default_payment: Optional[str] = None
+    default_payment_id: Optional[int] = None
 
 
 class Customer(CustomerBase):
