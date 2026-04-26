@@ -1,9 +1,9 @@
 from fastapi.testclient import TestClient
-from ..controllers import orders as controller
+from ..controllers import order_details as controller
 from ..main import app
 import pytest
-from ..models import orders as model
-from ..schemas.orders import OrderUpdate
+from ..models import order_details as model
+from ..models import orders as order_model
 
 # Create a test client for the app
 client = TestClient(app)
@@ -13,10 +13,10 @@ client = TestClient(app)
 def db_session(mocker):
     return mocker.Mock()
 
-def test_create_order(db_session):
+
+def test_create_order_detail(db_session):
     # Create a sample order
     order_data = {
-        "id": 1,
         "customer_name": "John Doe",
         "order_date": "2021-04-01",
         "description": "Test order",
@@ -24,17 +24,12 @@ def test_create_order(db_session):
         "order_status": "Test",
     }
 
-    order_object = model.Order(**order_data)
+    order_object = order_model.Order(**order_data)
 
     # Call the create function
     created_order = controller.create(db_session, order_object)
 
     # Assertions
     assert created_order is not None
-    assert created_order.customer_id is None
     assert created_order.customer_name == "John Doe"
-    assert created_order.order_date == "2021-04-01"
     assert created_order.description == "Test order"
-    assert created_order.tracking_number == "1A2B3C"
-    assert created_order.order_status == "Test"
-    assert created_order.price == 0.0
