@@ -15,7 +15,7 @@ class OrderBase(BaseModel):
 
 
 class OrderCreate(OrderBase):
-    customer_id: int
+    customer_id: Optional[int] = None
 
 
 class OrderUpdate(BaseModel):

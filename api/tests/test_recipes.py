@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from ..controllers import order_details as controller
+from ..controllers import recipes as controller
 from ..main import app
 import pytest
 from ..models import recipes as model
@@ -13,12 +13,20 @@ def db_session(mocker):
     return mocker.Mock()
 
 
-def test_create_order_detail(db_session):
-    # Create a sample order
+def test_create_recipe(db_session, mocker):
+    # Create mock sandwich
+    sandwich = mocker.Mock()
+    sandwich.id = 1
+
+    # Create mock resource
+    resource = mocker.Mock()
+    resource.id = 2
+
+    # Create a sample recipe
     recipe_data = {
-        "id": 1,
-        "sandwich_id": 1,
-        "resource_id": 1,
+        "sandwich_id": sandwich.id,
+        "resource_id": resource.id,
+        "amount": 1
     }
 
     recipe_object = model.Recipe(**recipe_data)
@@ -28,5 +36,5 @@ def test_create_order_detail(db_session):
 
     # Assertions
     assert created_recipe is not None
-    assert created_recipe.customer_name == "John Doe"
-    assert created_recipe.description == "Test order"
+    assert created_recipe.sandwich_id == sandwich.id
+    assert created_recipe.resource_id == resource.id

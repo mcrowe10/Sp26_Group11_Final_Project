@@ -42,6 +42,16 @@ def read_one(db: Session, item_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return item
 
+def search_by_category(db: Session, food_category):
+    try:
+        item = db.query(model.Sandwich).filter(model.Sandwich.food_category == food_category).first()
+        if not item:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return item
+
 
 def update(db: Session, item_id, request):
     try:
