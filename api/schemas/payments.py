@@ -19,8 +19,8 @@ class PaymentCreate(PaymentBase):
 
 class PaymentUpdate(BaseModel):
     card_info: Optional[str] = None
-    status: Optional[str] = None
     payment_type: Optional[str] = None
+    status: Optional[str] = None
 
 class Payment(PaymentBase):
     id: int

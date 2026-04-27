@@ -21,14 +21,13 @@ class OrderUpdate(BaseModel):
     description: Optional[str] = None
     order_status: Optional[str] = None
     tracking_number: Optional[str] = None
-    price: Optional[float] = None
 
 
 class Order(OrderBase):
     id: int
+    order_details: List[OrderDetail] = []
     price: float
     customer: Optional[Customer] = None
-    order_details: List[OrderDetail] = []
 
 
     class ConfigDict:

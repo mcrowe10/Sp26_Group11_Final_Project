@@ -6,6 +6,7 @@ from .customers import Customer
 
 class ReviewBase(BaseModel):
     score: float
+    review_text: str
 
 
 class ReviewCreate(ReviewBase):
@@ -13,13 +14,12 @@ class ReviewCreate(ReviewBase):
 
 
 class ReviewUpdate(BaseModel):
-    review_text: Optional[str] = None
     score: Optional[float] = None
+    review_text: Optional[str] = None
 
 
 class Review(ReviewBase):
     id: int
-    review_text: str
     customer: Optional[Customer] = None
 
     class ConfigDict:

@@ -97,6 +97,8 @@ def get_by_tracking_num(db: Session, tracking_number):
 def get_status(db: Session, tracking_number):
     try:
         order = get_by_tracking_num(db, tracking_number)
+        if not order:
+            raise HTTPException(status_code = 404, detail="Tracking number not found!")
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
