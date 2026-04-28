@@ -17,10 +17,12 @@ class PaymentBase(BaseModel):
 class PaymentCreate(PaymentBase):
     pass
 
+
 class PaymentUpdate(BaseModel):
     card_info: Optional[str] = None
     payment_type: Optional[str] = None
     status: Optional[str] = None
+
 
 class Payment(PaymentBase):
     id: int

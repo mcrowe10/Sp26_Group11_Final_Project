@@ -8,7 +8,7 @@ from .order_details import OrderDetail
 class OrderBase(BaseModel):
     order_date: datetime
     customer_name: str
-    description: str
+    description: Optional[str] = None
     order_status: str
     tracking_number: str
 
@@ -20,15 +20,12 @@ class OrderCreate(OrderBase):
 class OrderUpdate(BaseModel):
     description: Optional[str] = None
     order_status: Optional[str] = None
-    tracking_number: Optional[str] = None
 
 
 class Order(OrderBase):
     id: int
-    order_details: List[OrderDetail] = []
     price: float
-    customer: Optional[Customer] = None
-
+    order_details: List[OrderDetail] = []
 
     class ConfigDict:
         from_attributes = True

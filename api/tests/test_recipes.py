@@ -38,3 +38,4 @@ def test_create_recipe(db_session, mocker):
     assert created_recipe is not None
     assert created_recipe.sandwich_id == sandwich.id
     assert created_recipe.resource_id == resource.id
+    assert created_recipe.amount == 1

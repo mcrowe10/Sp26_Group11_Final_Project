@@ -6,7 +6,9 @@ from .payments import Payment
 
 class CustomerBase(BaseModel):
     customer_name: str
+    default_payment: Optional[int] = None
     payment: Optional[Payment] = None
+
 
 class CustomerCreate(CustomerBase):
     pass

@@ -11,22 +11,20 @@ def create(db: Session, request):
         customer = None
 
         if request.customer_id:
-            customer = db.query(customer_model.Customer).filter(
-                customer_model.Customer.id == request.customer_id).first()
+            customer = db.query(customer_model.Customer).filter(customer_model.Customer.id == request.customer_id).first()
 
             if not customer:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Customer not found"
-                )
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found")
 
         new_item = model.Order(
-            customer_name=customer.customer_name if customer else request.customer_name,        order_date=request.order_date,
+            customer_name=customer.customer_name if customer else request.customer_name,
+            order_date=request.order_date,
             description=request.description,
             tracking_number=request.tracking_number,
             order_status=request.order_status,
             price=0.0
         )
+
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
@@ -108,11 +106,11 @@ def get_status(db: Session, tracking_number):
 
 def get_order_by_date(db: Session, start_date, end_date):
     try:
-        order = db.query(model.Order).filter(model.Order.order_date >= start_date, model.Order.order_date <= end_date).all()
+        orders = db.query(model.Order).filter(model.Order.order_date >= start_date, model.Order.order_date <= end_date).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return order
+    return orders
 
 
 def get_least_ordered(db: Session, date):

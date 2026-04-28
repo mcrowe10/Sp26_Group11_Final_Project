@@ -16,7 +16,6 @@ def test_create_payment(db_session):
     # Create a sample payment
     payment_data = {
         "card_info": "1234 8765 2468 3579",
-        "status": "Test",
         "payment_type": "Credit"
     }
 
@@ -28,5 +27,5 @@ def test_create_payment(db_session):
     # Assertions
     assert created_payment is not None
     assert created_payment.card_info == "1234 8765 2468 3579"
-    assert created_payment.status == "Test"
+    assert created_payment.status == "pending"
     assert created_payment.payment_type == "Credit"

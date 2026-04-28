@@ -8,7 +8,7 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey("customers.id"))
-    review_text = Column(String(300), nullable=True, server_default="")
-    score = Column(DECIMAL(4,2), nullable=False, server_default='0.0')
+    review_text = Column(String(300), nullable=True)
+    score = Column(DECIMAL(4,2), server_default='5.0')
 
     customer = relationship("Customer", back_populates="reviews")
