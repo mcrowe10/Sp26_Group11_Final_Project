@@ -54,3 +54,7 @@ def by_date(start: datetime, end: datetime, db:Session = Depends(get_db)):
 @router.get("/least_ordered/")
 def least_ordered(date: datetime, db: Session = Depends(get_db)):
     return controller.get_least_ordered(db, date)
+
+@router.get("/revenue/")
+def revenue(date: datetime, db: Session = Depends(get_db)):
+    return controller.get_revenue(db, date)
