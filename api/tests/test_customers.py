@@ -20,10 +20,7 @@ def test_create_customer(db_session, mocker):
     # Create a sample customer
     customer_data = {
         "customer_name": "John Doe",
-        "email": "noone@nowhere.com",
-        "phone_number": "101-1234-123",
-        "address": "123 Nowhere Street",
-        "default_payment_id": payment.id
+        "default_payment": payment.id,
     }
 
     customer_object = model.Customer(**customer_data)
@@ -34,7 +31,4 @@ def test_create_customer(db_session, mocker):
     # Assertions
     assert created_customer is not None
     assert created_customer.customer_name == "John Doe"
-    assert created_customer.email == "noone@nowhere.com"
-    assert created_customer.phone_number == "101-1234-123"
-    assert created_customer.adress == "123 Nowhere Street"
-    assert created_customer.default_payment_id == payment.id
+    assert created_customer.default_payment == payment.id

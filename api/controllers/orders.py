@@ -3,6 +3,7 @@ from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
 from ..models import customers as customer_model
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime, timedelta
 
 
 def create(db: Session, request):
@@ -112,3 +113,33 @@ def get_order_by_date(db: Session, start_date, end_date):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return order
+
+
+def get_least_ordered(db: Session, date):
+    try:
+        if isinstance(date, str):
+            date_obj = datetime.fromisoformat(date.replace("Z", "+00:00")).replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            date_obj = date.replace(hour=0, minute=0, second=0, microsecond=0)
+        orders = db.query(model.Order).filter(model.Order.order_date >= date_obj, model.Order.order_date < date_obj + timedelta(days=1)).all()
+
+        count = {}
+
+        for order in orders:
+            for detail in order.order_details:
+                if detail.sandwich_id in count:
+                    count[detail.sandwich_id] += detail.amount
+                else:
+                    count[detail.sandwich_id] = detail.amount
+
+        if not count:
+            return {"message": "No orders found for this date"}
+
+        least_id = min(count, key=count.get)
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return {
+        "sandwich_id": least_id,
+        "total_ordered": count[least_id]
+    }

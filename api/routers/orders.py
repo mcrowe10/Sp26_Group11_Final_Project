@@ -35,14 +35,22 @@ def update(item_id: int, request: schema.OrderUpdate, db: Session = Depends(get_
 def delete(item_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, item_id=item_id)
 
+
 @router.get("/track/{tracking_number}")
 def track(tracking_number: str, db: Session = Depends(get_db)):
     return controller.get_by_tracking_num(db, tracking_number)
+
 
 @router.get("/status/{tracking_number}")
 def status(tracking_number: str, db: Session = Depends(get_db)):
     return controller.get_status(db, tracking_number)
 
+
 @router.get("/by-date/")
 def by_date(start: datetime, end: datetime, db:Session = Depends(get_db)):
     return controller.get_order_by_date(db, start, end)
+
+
+@router.get("/least_ordered/")
+def least_ordered(date: datetime, db: Session = Depends(get_db)):
+    return controller.get_least_ordered(db, date)
