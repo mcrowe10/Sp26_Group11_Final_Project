@@ -143,3 +143,18 @@ def get_least_ordered(db: Session, date):
         "sandwich": sandwich,
         "total_ordered": count[least_id]
     }
+
+def get_revenue(db: Session, date):
+    try:
+        if isinstance(date, str):
+            date_obj = datetime.fromisoformat(date.replace("Z", "+00:00")).replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            date_obj = date.replace(hour=0, minute=0, second=0, microsecond=0)
+        orders = db.query(model.Order).filter(model.Order.order_date >= date_obj, model.Order.order_date < date_obj + timedelta(days=1)).all()
+        price = 0
+        for order in orders:
+            if order.order_date == date:
+                price += order.price
+        return {"revenue": price}
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Date not found!")
