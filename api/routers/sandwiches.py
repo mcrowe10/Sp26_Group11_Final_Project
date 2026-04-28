@@ -25,7 +25,7 @@ def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)
 
 
-@router.get("/category/{food_category}", response_model=schema.Sandwich)
+@router.get("/category/{food_category}", response_model=list[schema.Sandwich])
 def search_by_category(food_category: str, db: Session = Depends(get_db)):
     return controller.search_by_category(db, food_category=food_category)
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from .resources import Resource
+from .resources import Resource, ResourceDisplay
 
 
 class RecipeBase(BaseModel):
@@ -21,7 +21,15 @@ class RecipeUpdate(BaseModel):
 
 class Recipe(RecipeBase):
     id: int
-    resource: Resource = None
+    resource: ResourceDisplay = None
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class RecipeDisplay(BaseModel):
+    amount: int
+    resource: ResourceDisplay = None
 
     class ConfigDict:
         from_attributes = True

@@ -30,3 +30,9 @@ class Payment(PaymentBase):
 
     class ConfigDict:
         from_attributes = True
+
+
+class DisplayPayment(PaymentBase):
+
+    class ConfigDict:
+        from_attributes = True

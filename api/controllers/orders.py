@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
 from ..models import customers as customer_model
+from ..models import sandwiches as sandwich_model
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timedelta
 
@@ -116,7 +117,7 @@ def get_order_by_date(db: Session, start_date, end_date):
 def get_least_ordered(db: Session, date):
     try:
         if isinstance(date, str):
-            date_obj = datetime.fromisoformat(date.replace("Z", "+00:00")).replace(hour=0, minute=0, second=0, microsecond=0)
+            date_obj = datetime.fromisoformat(date.replace("Z", "+00:00")).replace(tzinfo=None, hour=0, minute=0, second=0, microsecond=0)
         else:
             date_obj = date.replace(hour=0, minute=0, second=0, microsecond=0)
         orders = db.query(model.Order).filter(model.Order.order_date >= date_obj, model.Order.order_date < date_obj + timedelta(days=1)).all()
@@ -134,10 +135,11 @@ def get_least_ordered(db: Session, date):
             return {"message": "No orders found for this date"}
 
         least_id = min(count, key=count.get)
+        sandwich = db.query(sandwich_model.Sandwich).filter(sandwich_model.Sandwich.id == least_id).first()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return {
-        "sandwich_id": least_id,
+        "sandwich": sandwich,
         "total_ordered": count[least_id]
     }

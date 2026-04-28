@@ -22,3 +22,10 @@ class Resource(ResourceBase):
 
     class ConfigDict:
         from_attributes = True
+
+
+class ResourceDisplay(BaseModel):
+    item: str
+
+    class ConfigDict:
+        from_attributes = True
