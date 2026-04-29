@@ -18,6 +18,7 @@ def create(db: Session, request):
         if getattr(request, "payment", None):
             new_payment = payment.Payment(
                 **request.payment.dict(),
+                status="Saved"
             )
             db.add(new_payment)
             db.flush()

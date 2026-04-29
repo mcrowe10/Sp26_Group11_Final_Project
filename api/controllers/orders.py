@@ -3,6 +3,7 @@ from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
 from ..models import customers as customer_model
 from ..models import sandwiches as sandwich_model
+from ..models import payments as payment_model
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timedelta
 
@@ -24,11 +25,19 @@ def create(db: Session, request):
             description=request.description,
             tracking_number=request.tracking_number,
             order_status=request.order_status,
-            payment=customer.default_payment if customer else request.payment,
             price=0.0
         )
-
         db.add(new_item)
+
+        if getattr(request, "payment", None):
+            new_payment = payment_model.Payment(
+                **request.payment.dict(),
+                status="Saved"
+            )
+            db.add(new_payment)
+            db.flush()
+            new_item.payment = new_payment
+
         db.commit()
         db.refresh(new_item)
     except SQLAlchemyError as e:
