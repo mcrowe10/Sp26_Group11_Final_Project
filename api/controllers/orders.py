@@ -32,11 +32,11 @@ def create(db: Session, request):
 
         if getattr(request, "payment", None):
             new_payment = payment_model.Payment(
-                **request.payment.dict(),
-                status="Saved"
+                **request.payment.dict()
             )
             db.add(new_payment)
             db.flush()
+            new_payment.status="Complete"
             new_item.payment = new_payment
 
         db.commit()

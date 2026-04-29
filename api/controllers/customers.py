@@ -17,11 +17,11 @@ def create(db: Session, request):
         # 2. If payment info was provided, create a Payment model
         if getattr(request, "payment", None):
             new_payment = payment.Payment(
-                **request.payment.dict(),
-                status="Saved"
+                **request.payment.dict()
             )
             db.add(new_payment)
             db.flush()
+            new_payment.status="Default"
             new_customer.default_payment = new_payment.id
 
         # 3. Refresh customer so payments relationship is populated
