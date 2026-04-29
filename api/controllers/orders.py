@@ -18,11 +18,13 @@ def create(db: Session, request):
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found")
 
         new_item = model.Order(
+            customer_id=customer.id if customer else None,
             customer_name=customer.customer_name if customer else request.customer_name,
             order_date=request.order_date,
             description=request.description,
             tracking_number=request.tracking_number,
             order_status=request.order_status,
+            payment=customer.default_payment if customer else request.payment,
             price=0.0
         )
 

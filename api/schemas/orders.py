@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
 from .order_details import OrderDetail
+from .payments import Payment
 
 
 class OrderBase(BaseModel):
@@ -10,6 +11,7 @@ class OrderBase(BaseModel):
     description: Optional[str] = None
     order_status: str
     tracking_number: str
+    payment: Payment = None
 
 
 class OrderCreate(OrderBase):

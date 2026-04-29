@@ -8,7 +8,7 @@ def create(db: Session, request):
     new_item = model.Payment(
         card_info=request.card_info,
         payment_type=request.payment_type,
-        status="pending"
+        status=request.status
     )
     try:
         db.add(new_item)
