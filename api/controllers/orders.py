@@ -4,6 +4,7 @@ from ..models import orders as model
 from ..models import customers as customer_model
 from ..models import sandwiches as sandwich_model
 from ..models import payments as payment_model
+from ..models import promotion as promotion_model
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timedelta
 
@@ -169,3 +170,23 @@ def get_revenue(db: Session, date):
         return {"revenue": price}
     except SQLAlchemyError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Date not found!")
+
+def apply_promotion(db:Session, id: int, code: str):
+    order = db.query(model.Order).filter(model.Order.id == id).first()
+    promotion = db.query(model.Promotion).filter(model.Promotion.code == code).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found!")
+
+    if not promotion:
+        raise HTTPException(status_code=400, detail="Promotion not found!")
+
+    if promotion.expire_date < datetime.now():
+        raise HTTPException(status_code=400, detail="Promotion expired!")
+
+    discount_price = order.price * (promotion.discount / 100)
+    order.price -= discount_price
+
+    db.commit()
+    db.refresh(order)
+    return order
