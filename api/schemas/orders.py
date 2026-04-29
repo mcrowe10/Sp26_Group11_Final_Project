@@ -3,13 +3,20 @@ from typing import Optional, List
 from pydantic import BaseModel
 from .order_details import OrderDetail
 from .payments import Payment
+from enum import Enum
+
+
+class OrderStatus(str, Enum):
+    PENDING = "Pending"
+    PAID = "Paid"
+    SUCCESS = "Complete"
 
 
 class OrderBase(BaseModel):
     order_date: datetime
     customer_name: str
     description: Optional[str] = None
-    order_status: str
+    order_status: OrderStatus
     tracking_number: str
 
 
@@ -25,10 +32,10 @@ class OrderUpdate(BaseModel):
 
 class Order(OrderBase):
     price: float
-    discounted_price: float
+    discounted_price: Optional[float] = None
     id: int
     order_details: List[OrderDetail] = []
-    payment: Payment = None
+    payment: Optional[Payment] = None
 
     class ConfigDict:
         from_attributes = True

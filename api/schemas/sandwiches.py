@@ -1,7 +1,6 @@
-from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
-from .recipes import RecipeDisplay
+from .recipes import Recipe
 
 
 class SandwichBase(BaseModel):
@@ -24,16 +23,7 @@ class SandwichUpdate(BaseModel):
 
 class Sandwich(SandwichBase):
     id: int
-    recipes: List[RecipeDisplay] = []
-
-    class ConfigDict:
-        from_attributes = True
-
-
-class SandwichDisplay(BaseModel):
-    sandwich_name: str
-    price: float
-    recipes: List[RecipeDisplay] = []
+    recipes: List[Recipe] = []
 
     class ConfigDict:
         from_attributes = True

@@ -5,6 +5,8 @@ from ..models import customers as customer_model
 from ..models import sandwiches as sandwich_model
 from ..models import payments as payment_model
 from ..models import promotions as promotion_model
+from ..schemas import orders as schema
+from ..schemas import payments as payment_schema
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timedelta
 
@@ -25,8 +27,8 @@ def create(db: Session, request):
             order_date=request.order_date,
             description=request.description,
             tracking_number=request.tracking_number,
-            order_status=request.order_status,
-            payment_id=request.paymenr_id if customer is None or customer.default_payment is None else customer.default_payment,
+            order_status=schema.OrderStatus.PENDING,
+            payment_id=None if customer is None or customer.default_payment is None else customer.default_payment,
             price=0.0
         )
         db.add(new_item)
@@ -157,10 +159,10 @@ def get_revenue(db: Session, date):
         orders = db.query(model.Order).filter(model.Order.order_date >= date_obj, model.Order.order_date < date_obj + timedelta(days=1)).all()
         price = 0
         for order in orders:
-            if order.order_date == date:
-                price += order.price
+            price += order.price
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Date not found!")
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return {"revenue": price}
 
 
@@ -179,13 +181,17 @@ def apply_promotion(db:Session, item_id, promo_code: str):
         if promotion.expire_date < datetime.now():
             raise HTTPException(status_code=400, detail="Promotion expired!")
 
+        if order.discounted_price is not None:
+            raise HTTPException(status_code=400, detail="Discount already applied!")
+
         discount_price = order.price * (1 - promotion.discount / 100)
         order.discounted_price = discount_price
 
         db.commit()
         db.refresh(order)
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Date not found!")
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return order
 
 
@@ -201,12 +207,13 @@ def add_payment(db: Session, order_id: int, request):
 
         new_payment = payment_model.Payment(
             card_info=request.card_info,
-            payment_type=request.payment_type
+            payment_type=request.payment_type,
+            status=payment_schema.PaymentStatus.SUCCESS
         )
-        new_payment.status="Complete"
         db.add(new_payment)
         db.flush()
         order.payment_id = new_payment.id
+        order.order_status = "Paid"
 
         db.commit()
         db.refresh(order)

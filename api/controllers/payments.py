@@ -1,13 +1,15 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import payments as model
+from ..schemas import payments as schema
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
     new_item = model.Payment(
         card_info=request.card_info,
-        payment_type=request.payment_type
+        payment_type=request.payment_type,
+        status=schema.PaymentStatus.PENDING,
     )
     try:
         db.add(new_item)

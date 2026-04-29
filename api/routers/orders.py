@@ -27,46 +27,46 @@ def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)
 
 
+@router.get("/{tracking_number}", response_model=schema.Order)
+def track(tracking_number: str, db: Session = Depends(get_db)):
+    return controller.get_by_tracking_num(db, tracking_number=tracking_number)
+
+
+@router.get("/status/{tracking_number}")
+def status(tracking_number: str, db: Session = Depends(get_db)):
+    return controller.get_status(db, tracking_number=tracking_number)
+
+
+@router.get("/{date}", response_model=list[schema.Order])
+def by_date(start: datetime, end: datetime, db:Session = Depends(get_db)):
+    return controller.get_order_by_date(db, start_date=start, end_date=end)
+
+
+@router.get("/least_ordered/{date}")
+def least_ordered(date: datetime, db: Session = Depends(get_db)):
+    return controller.get_least_ordered(db, date=date)
+
+
+@router.get("/revenue/{date}")
+def revenue(date: datetime, db: Session = Depends(get_db)):
+    return controller.get_revenue(db, date=date)
+
+
 @router.put("/{item_id}", response_model=schema.Order)
 def update(item_id: int, request: schema.OrderUpdate, db: Session = Depends(get_db)):
     return controller.update(db=db, request=request, item_id=item_id)
 
 
-@router.delete("/{item_id}")
-def delete(item_id: int, db: Session = Depends(get_db)):
-    return controller.delete(db=db, item_id=item_id)
-
-
-@router.get("/track/{tracking_number}")
-def track(tracking_number: str, db: Session = Depends(get_db)):
-    return controller.get_by_tracking_num(db, tracking_number)
-
-
-@router.get("/status/{tracking_number}")
-def status(tracking_number: str, db: Session = Depends(get_db)):
-    return controller.get_status(db, tracking_number)
-
-
-@router.get("/by-date/")
-def by_date(start: datetime, end: datetime, db:Session = Depends(get_db)):
-    return controller.get_order_by_date(db, start, end)
-
-
-@router.get("/least_ordered/")
-def least_ordered(date: datetime, db: Session = Depends(get_db)):
-    return controller.get_least_ordered(db, date)
-
-
-@router.get("/revenue/")
-def revenue(date: datetime, db: Session = Depends(get_db)):
-    return controller.get_revenue(db, date)
-
-
-@router.post("/promotion/")
+@router.put("/promotion/{item_id}", response_model=schema.Order)
 def promotion(item_id: int, promo_code: str,  db: Session = Depends(get_db)):
     return controller.apply_promotion(db=db, item_id=item_id, promo_code=promo_code)
 
 
-@router.post("/payment/")
+@router.post("/payment/{item_id}", response_model=schema.Order)
 def payment(item_id: int, request: payment_schema.PaymentCreate, db: Session = Depends(get_db)):
     return controller.add_payment(db=db, item_id=item_id, request=request)
+
+
+@router.delete("/{item_id}")
+def delete(item_id: int, db: Session = Depends(get_db)):
+    return controller.delete(db=db, item_id=item_id)

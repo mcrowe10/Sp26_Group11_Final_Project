@@ -1,17 +1,18 @@
-from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
+from enum import Enum
 
-class PaymentStatus(str):
-    pending = "pending"
-    processing = "processing"
-    complete = "complete"
-    declined = "declined"
+
+class PaymentStatus(str, Enum):
+    PENDING = "Pending"
+    SAVED = "Default"
+    SUCCESS = "Complete"
 
 
 class PaymentBase(BaseModel):
     card_info: str
     payment_type: str
+    status: PaymentStatus
 
 
 class PaymentCreate(PaymentBase):
@@ -26,13 +27,6 @@ class PaymentUpdate(BaseModel):
 
 class Payment(PaymentBase):
     id: int
-    status: str
-
-    class ConfigDict:
-        from_attributes = True
-
-
-class DisplayPayment(PaymentBase):
 
     class ConfigDict:
         from_attributes = True

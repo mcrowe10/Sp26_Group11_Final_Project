@@ -1,6 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME
 from sqlalchemy.orm import relationship
-from datetime import datetime
 from ..dependencies.database import Base
 
 
@@ -9,8 +8,8 @@ class Payment(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     card_info = Column(String(100))
-    status = Column(String(50), server_default="pending")
-    payment_type = Column(String(50), server_default="CreditCard")
+    status = Column(String(50))
+    payment_type = Column(String(50))
 
     customer = relationship("Customer", back_populates="payment")
     orders = relationship("Order", back_populates="payment")

@@ -1,16 +1,18 @@
-from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from .payments import DisplayPayment
+from .payments import Payment
 
 
 class CustomerBase(BaseModel):
     customer_name: str
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    payment: Optional[Payment] = None
 
 
 class CustomerCreate(CustomerBase):
     default_payment: Optional[int] = None
-    payment: Optional[DisplayPayment] = None
 
 
 class CustomerUpdate(BaseModel):
@@ -22,17 +24,7 @@ class CustomerUpdate(BaseModel):
 
 
 class Customer(CustomerBase):
-    email: Optional[str] = None
-    phone_number: Optional[str] = None
-    address: Optional[str] = None
-    payment: Optional[DisplayPayment] = None
     id: int
-
-    class ConfigDict:
-        from_attributes = True
-
-
-class DisplayCustomer(CustomerBase):
 
     class ConfigDict:
         from_attributes = True
