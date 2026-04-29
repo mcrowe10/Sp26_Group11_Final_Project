@@ -16,6 +16,9 @@ class Order(Base):
     tracking_number = Column(String(100), unique=True)
     order_status = Column(String(50), server_default="Pending")
     price = Column(DECIMAL(10,2))
+    payment_id = Column(Integer, ForeignKey("payments.id"), nullable=True)
+    discounted_price = Column(DECIMAL(10,2), nullable=True)
 
     order_details = relationship("OrderDetail", back_populates="order")
     customer = relationship("Customer", back_populates="orders")
+    payment = relationship("Payment", back_populates="orders")

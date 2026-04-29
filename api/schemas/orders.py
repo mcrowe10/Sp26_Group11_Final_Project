@@ -11,11 +11,11 @@ class OrderBase(BaseModel):
     description: Optional[str] = None
     order_status: str
     tracking_number: str
-    payment: Payment = None
 
 
 class OrderCreate(OrderBase):
     customer_id: Optional[int] = None
+    payment_id: Optional[int] = None
 
 
 class OrderUpdate(BaseModel):
@@ -25,8 +25,10 @@ class OrderUpdate(BaseModel):
 
 class Order(OrderBase):
     price: float
+    discounted_price: float
     id: int
     order_details: List[OrderDetail] = []
+    payment: Payment = None
 
     class ConfigDict:
         from_attributes = True

@@ -13,3 +13,4 @@ class Payment(Base):
     payment_type = Column(String(50), server_default="CreditCard")
 
     customer = relationship("Customer", back_populates="payment")
+    orders = relationship("Order", back_populates="payment")

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, FastAPI, status, Response
 from sqlalchemy.orm import Session
 from ..controllers import orders as controller
 from ..schemas import orders as schema
+from ..schemas import payments as payment_schema
 from ..dependencies.database import engine, get_db
 from datetime import datetime
 
@@ -55,6 +56,17 @@ def by_date(start: datetime, end: datetime, db:Session = Depends(get_db)):
 def least_ordered(date: datetime, db: Session = Depends(get_db)):
     return controller.get_least_ordered(db, date)
 
+
 @router.get("/revenue/")
 def revenue(date: datetime, db: Session = Depends(get_db)):
     return controller.get_revenue(db, date)
+
+
+@router.post("/promotion/")
+def promotion(item_id: int, promo_code: str,  db: Session = Depends(get_db)):
+    return controller.apply_promotion(db=db, item_id=item_id, promo_code=promo_code)
+
+
+@router.post("/payment/")
+def payment(item_id: int, request: payment_schema.PaymentCreate, db: Session = Depends(get_db)):
+    return controller.add_payment(db=db, item_id=item_id, request=request)
