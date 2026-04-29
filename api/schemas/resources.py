@@ -4,10 +4,11 @@ from pydantic import BaseModel
 
 class ResourceBase(BaseModel):
     item: str
+    amount: int
 
 
 class ResourceCreate(ResourceBase):
-    amount: int
+    pass
 
 
 class ResourceUpdate(BaseModel):
