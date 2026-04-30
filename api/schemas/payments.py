@@ -12,7 +12,6 @@ class PaymentStatus(str, Enum):
 class PaymentBase(BaseModel):
     card_info: str
     payment_type: str
-    status: PaymentStatus
 
 
 class PaymentCreate(PaymentBase):
@@ -26,6 +25,7 @@ class PaymentUpdate(BaseModel):
 
 
 class Payment(PaymentBase):
+    status: PaymentStatus
     id: int
 
     class ConfigDict:

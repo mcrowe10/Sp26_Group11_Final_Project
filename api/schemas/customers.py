@@ -5,14 +5,14 @@ from .payments import Payment
 
 class CustomerBase(BaseModel):
     customer_name: str
-    email: Optional[str] = None
-    phone_number: Optional[str] = None
-    address: Optional[str] = None
-    payment: Optional[Payment] = None
 
 
 class CustomerCreate(CustomerBase):
-    default_payment: Optional[int] = None
+    payment_id: Optional[int] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    default_payment: Optional[Payment] = None
 
 
 class CustomerUpdate(BaseModel):
@@ -20,11 +20,21 @@ class CustomerUpdate(BaseModel):
     email: Optional[str] = None
     phone_number: Optional[str] = None
     address: Optional[str] = None
-    default_payment: Optional[int] = None
+    payment_id: Optional[int] = None
 
 
 class Customer(CustomerBase):
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
     id: int
+    default_payment: Optional[Payment] = None
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class CustomerDisplay(CustomerBase):
 
     class ConfigDict:
         from_attributes = True

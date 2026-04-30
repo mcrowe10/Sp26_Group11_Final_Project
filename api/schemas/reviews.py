@@ -1,15 +1,15 @@
 from typing import Optional
 from pydantic import BaseModel
+from .customers import CustomerDisplay
 
 
 class ReviewBase(BaseModel):
-    customer_id: int
     score: float
     review_text: Optional[str] = None
 
 
 class ReviewCreate(ReviewBase):
-    pass
+    customer_id: int
 
 
 class ReviewUpdate(BaseModel):
@@ -18,6 +18,7 @@ class ReviewUpdate(BaseModel):
 
 
 class Review(ReviewBase):
+    Customer: CustomerDisplay
     id: int
 
     class ConfigDict:

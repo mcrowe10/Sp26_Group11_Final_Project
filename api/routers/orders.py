@@ -22,12 +22,12 @@ def read_all(db: Session = Depends(get_db)):
     return controller.read_all(db)
 
 
-@router.get("/{item_id}", response_model=schema.Order)
+@router.get("/id/{item_id}", response_model=schema.Order)
 def read_one(item_id: int, db: Session = Depends(get_db)):
     return controller.read_one(db, item_id=item_id)
 
 
-@router.get("/{tracking_number}", response_model=schema.Order)
+@router.get("/tracking/{tracking_number}", response_model=schema.Order)
 def track(tracking_number: str, db: Session = Depends(get_db)):
     return controller.get_by_tracking_num(db, tracking_number=tracking_number)
 
@@ -37,7 +37,7 @@ def status(tracking_number: str, db: Session = Depends(get_db)):
     return controller.get_status(db, tracking_number=tracking_number)
 
 
-@router.get("/{date}", response_model=list[schema.Order])
+@router.get("/date/{date}", response_model=list[schema.Order])
 def by_date(start: datetime, end: datetime, db:Session = Depends(get_db)):
     return controller.get_order_by_date(db, start_date=start, end_date=end)
 

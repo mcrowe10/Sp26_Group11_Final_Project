@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from .sandwiches import Sandwich
+from .sandwiches import SandwichDisplay
 
 
 class OrderDetailBase(BaseModel):
@@ -18,7 +18,7 @@ class OrderDetailUpdate(BaseModel):
 
 class OrderDetail(OrderDetailBase):
     id: int
-    sandwich: Sandwich
+    sandwich: SandwichDisplay
 
     class ConfigDict:
         from_attributes = True

@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from .resources import Resource
+from .resources import ResourceDisplay
 
 
 class RecipeBase(BaseModel):
@@ -18,7 +18,14 @@ class RecipeUpdate(BaseModel):
 
 class Recipe(RecipeBase):
     id: int
-    resource: Resource
+    resource: ResourceDisplay
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class RecipeDisplay(RecipeBase):
+    resource: ResourceDisplay
 
     class ConfigDict:
         from_attributes = True

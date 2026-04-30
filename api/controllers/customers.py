@@ -13,23 +13,23 @@ def create(db: Session, request):
             email=request.email,
             phone_number=request.phone_number,
             address=request.address,
-            default_payment=request.default_payment
+            payment_id=request.payment_id
         )
         db.add(new_customer)
         db.flush()
 
         # 2. If payment info was provided, create a Payment model
-        if getattr(request, "payments", None):
+        if getattr(request, "default_payment", None):
             new_payment = payment_model.Payment(
-                **request.payments.dict(),
+                **request.default_payment.dict(),
                 status=payment_schema.PaymentStatus.SAVED
             )
             db.add(new_payment)
             db.flush()
-            new_customer.default_payment = new_payment.id
+            new_customer.payment_id = new_payment.id
 
-        elif request.default_payment:
-            payment = db.query(payment_model.Payment).filter(payment_model.Payment.id == request.default_payment).first()
+        elif request.payment_id:
+            payment = db.query(payment_model.Payment).filter(payment_model.Payment.id == request.payment_id).first()
 
             if not payment:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Payment id not found!")
