@@ -18,7 +18,7 @@ class ReviewUpdate(BaseModel):
 
 
 class Review(ReviewBase):
-    Customer: CustomerDisplay
+    customer: CustomerDisplay
     id: int
 
     class ConfigDict:

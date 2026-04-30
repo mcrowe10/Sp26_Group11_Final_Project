@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from .payments import Payment
+from .payments import PaymentCreate, Payment
 
 
 class CustomerBase(BaseModel):
@@ -12,7 +12,7 @@ class CustomerCreate(CustomerBase):
     email: Optional[str] = None
     phone_number: Optional[str] = None
     address: Optional[str] = None
-    default_payment: Optional[Payment] = None
+    default_payment: Optional[PaymentCreate] = None
 
 
 class CustomerUpdate(BaseModel):
